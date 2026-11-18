@@ -123,72 +123,125 @@ body.day-2 .sky::after{opacity:1}
 /* ---------- אזור משחק ---------- */
 .game{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:26px; align-items:start}
 
-.board{position:relative; border-radius:30px; padding:clamp(16px,2.6vw,30px); color:var(--ink);
+/* הלוח: מסגרת פסים צבעונית ונוף מצויר */
+.board{position:relative; border-radius:36px; padding:clamp(16px,2.6vw,30px) clamp(16px,2.6vw,30px) 96px; color:var(--ink); margin:14px;
+  border:14px solid transparent;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255,255,255,.9), transparent 40%),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(27,58,107,.045) 31px 32px),
-    repeating-linear-gradient(90deg, transparent 0 31px, rgba(27,58,107,.045) 31px 32px),
-    var(--paper);
-  box-shadow:0 0 0 8px var(--navy), 0 0 0 10px rgba(232,98,42,.75), 0 0 0 18px var(--navy-2), 0 40px 80px -30px rgba(0,0,0,.8);
-  margin:18px; animation:boardIn 1s .2s var(--ease-out) both}
+    radial-gradient(circle at 2px 2px, rgba(170,120,40,.14) 1.6px, transparent 2.2px) 0 0/24px 24px padding-box,
+    radial-gradient(ellipse 300px 170px at 0% 62%, #c4e8ad 0 97%, transparent 100%) padding-box,
+    radial-gradient(ellipse 260px 160px at 100% 30%, #cdeeb8 0 97%, transparent 100%) padding-box,
+    radial-gradient(ellipse 240px 120px at 55% 0%, #d4effb 0 97%, transparent 100%) padding-box,
+    linear-gradient(180deg, #fff4d6 0%, #fde9bd 100%) padding-box,
+    repeating-linear-gradient(45deg, #ffd166 0 18px, #ef476f 18px 36px, #3a86ff 36px 54px, #06b47f 54px 72px) border-box;
+  box-shadow:0 0 0 5px #fff, 0 0 0 11px var(--navy), 0 40px 80px -30px rgba(0,0,0,.85);
+  animation:boardIn 1s .2s var(--ease-out) both}
+.board::before{content:""; position:absolute; inset:0; border-radius:22px; pointer-events:none; z-index:0;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.75), inset 0 10px 24px rgba(140,90,20,.14)}
 @keyframes boardIn{from{opacity:0; transform:translateY(30px) scale(.97)}to{opacity:1; transform:none}}
-.board-head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:22px}
-.board-head h2{margin:0; font-family:'Secular One','Heebo',sans-serif; font-weight:400; font-size:clamp(20px,2.4vw,26px); color:var(--navy)}
+.deco{position:absolute; inset:0; overflow:hidden; border-radius:22px; pointer-events:none; z-index:0}
+.deco .scenery{position:absolute; left:0; right:0; bottom:0; width:100%; height:92px}
+.deco .d-cloud{position:absolute; width:96px; top:14px; left:42%; opacity:.95; animation:cloudFloat 9s ease-in-out infinite}
+.deco .d-cloud.c2{width:64px; top:58px; left:auto; right:46%; animation-duration:12s; animation-direction:reverse; opacity:.85}
+@keyframes cloudFloat{50%{transform:translateX(22px)}}
+.deco .d-sun{position:absolute; width:58px; top:-14px; left:-14px; animation:spin 30s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.deco .d-balloon{position:absolute; width:36px; top:8px; right:31%; animation:balloon 6s ease-in-out infinite}
+@keyframes balloon{50%{transform:translateY(-12px) rotate(3deg)}}
+
+.board-head{position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:30px}
+.board-head h2{position:relative; margin:0; padding:8px 22px 10px; border-radius:16px; background:var(--navy); color:#ffd166;
+  font-family:'Secular One','Heebo',sans-serif; font-weight:400; font-size:clamp(20px,2.4vw,27px); transform:rotate(-2deg);
+  box-shadow:0 6px 0 #0b1d3f, 0 14px 22px -10px rgba(0,0,0,.45); animation:signSwing 5s ease-in-out infinite}
+@keyframes signSwing{50%{transform:rotate(1deg)}}
+.board-head h2::before,.board-head h2::after{content:""; position:absolute; top:50%; width:8px; height:8px; margin-top:-4px; border-radius:50%; background:#ffd166; box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.board-head h2::before{right:8px}.board-head h2::after{left:8px}
 .legend{display:flex; gap:8px; flex-wrap:wrap}
-.lg{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--muted); padding:5px 10px; border-radius:99px; background:#fff; border:1px solid var(--line)}
-.lg i{width:10px; height:10px; border-radius:50%; background:var(--c)}
+.lg{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:700; color:var(--ink); padding:6px 12px; border-radius:99px; background:#fff; border:2px solid var(--c); box-shadow:0 3px 0 var(--c)}
+.lg i{width:12px; height:12px; border-radius:4px; background:repeating-linear-gradient(45deg, var(--c) 0 3px, color-mix(in srgb, var(--c) 70%, #fff) 3px 6px)}
 
-.tiles{position:relative; display:grid; grid-template-columns:repeat(var(--cols,4), minmax(0,1fr)); gap:clamp(22px,3vw,34px) clamp(14px,2.2vw,26px)}
+.tiles{position:relative; z-index:1; display:grid; grid-template-columns:repeat(var(--cols,4), minmax(0,1fr)); gap:clamp(30px,3.6vw,42px) clamp(14px,2.2vw,26px)}
+
+/* הדרך */
 .road{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0}
-.road .base{fill:none; stroke:var(--sand-2); stroke-width:18; stroke-linecap:round; stroke-linejoin:round}
-.road .done{fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round; stroke-linejoin:round; transition:stroke-dashoffset .75s var(--ease-out), stroke .8s}
-.road .dash{fill:none; stroke:#fff; stroke-width:2.5; stroke-dasharray:7 10; stroke-linecap:round; stroke-linejoin:round; opacity:.9}
+.road path{fill:none; stroke-linecap:round; stroke-linejoin:round}
+.road .edge{stroke:#d6a65c; stroke-width:42}
+.road .base{stroke:#f3d394; stroke-width:33}
+.road .done{stroke:var(--accent); stroke-width:12; opacity:.9; transition:stroke-dashoffset .75s var(--ease-out), stroke .8s}
+.road .dash{stroke:#fff; stroke-width:5; stroke-dasharray:.1 16; opacity:.95}
 
-.tile{--tc:var(--orange); --tt:var(--orange-soft);
-  position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center;
-  min-height:156px; padding:16px 10px 14px; border-radius:var(--radius); background:#fff; border:2px solid var(--line);
-  box-shadow:0 3px 0 var(--line), 0 14px 26px -16px rgba(11,29,63,.45);
-  cursor:pointer; transition:transform .3s var(--ease-spring), box-shadow .3s, border-color .3s, opacity .3s;
+/* אריחי התחנות - קלפים שמתהפכים */
+.tile{--tc:#ef476f; --tcd:color-mix(in srgb, var(--tc) 70%, #000); --tcs:color-mix(in srgb, var(--tc) 14%, #fff);
+  --bk:#ff8c42; --bk2:#ff7a2b; --bkd:#c4521a;
+  position:relative; z-index:1; perspective:1000px; outline:none;
   animation:tileIn .6s var(--ease-out) backwards; animation-delay:calc(.35s + var(--i) * 55ms)}
+.tile.d2{--bk:#21b8bb; --bk2:#14a5a8; --bkd:#0d7a7c}
 @keyframes tileIn{from{opacity:0; transform:translateY(18px) scale(.9)}to{opacity:1; transform:none}}
-.tile:hover{transform:translateY(-4px) rotate(-.6deg); box-shadow:0 3px 0 var(--line), 0 20px 30px -16px rgba(11,29,63,.5)}
-.tile.d2{--tc:var(--teal); --tt:var(--teal-soft)}
-.tile.d0{--tc:var(--navy); --tt:#e4eaf5}
-.tile .num{position:absolute; top:9px; inset-inline-start:11px; font:700 12px/1 'Heebo'; color:#9aa3b2}
-.tile .spot{position:relative; width:56px; height:56px; flex:none; border-radius:50%; display:grid; place-items:center; background:var(--tt); color:var(--tc);
-  transition:transform .4s var(--ease-spring), background .3s}
-.tile .spot svg{width:28px; height:28px; fill:currentColor}
-.tile .time{margin-top:10px; font:400 22px/1 'Secular One','Heebo',sans-serif; color:var(--navy); font-variant-numeric:tabular-nums}
-.tile .ttl{margin-top:6px; font-size:14px; font-weight:600; line-height:1.3; color:var(--ink)}
-.tile .ribbon{position:absolute; top:-13px; left:50%; transform:translateX(-50%); white-space:nowrap;
-  padding:4px 12px; border-radius:99px; background:var(--tc); color:#fff; font-size:12px; font-weight:700;
-  box-shadow:0 6px 12px -6px var(--tc)}
-.tile .check{position:absolute; top:-4px; inset-inline-end:-4px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
-  background:var(--tc); color:#fff; transform:scale(0); transition:transform .4s var(--ease-spring); box-shadow:0 0 0 3px #fff}
-.tile .check svg{width:14px; height:14px; fill:#fff}
-.tile.visited .check{transform:scale(1)}
-.tile.visited{background:#fbf8f3}
-.tile.visited .time,.tile.visited .ttl{color:#8a93a3}
-.tile.visited .spot{background:#efece6; color:#a4abb8}
-.tile.current{border-color:var(--tc); opacity:1; box-shadow:0 3px 0 var(--tc), 0 0 0 6px color-mix(in srgb, var(--tc) 18%, transparent), 0 22px 34px -16px rgba(11,29,63,.55)}
-.tile.current .time{color:var(--tc)}
-.tile.next{border-style:dashed; border-color:color-mix(in srgb, var(--tc) 55%, var(--line))}
-.tile.next::after{content:"הבא בתור"; position:absolute; bottom:-11px; left:50%; transform:translateX(-50%);
-  font-size:11px; font-weight:700; color:var(--tc); background:var(--paper); padding:1px 8px; border-radius:99px; border:1px dashed var(--tc);
-  white-space:nowrap; animation:nudge 1.6s ease-in-out infinite}
-@keyframes nudge{50%{transform:translateX(-50%) translateY(-3px)}}
+.flip{position:relative; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .8s cubic-bezier(.3,1.35,.45,1)}
+.tile.hidden .flip{transform:rotateY(180deg)}
+.tile.revealed{cursor:pointer}
+.tile.revealed:hover .flip{transform:translateY(-5px) rotate(-1.2deg)}
+.tile:focus-visible .flip{outline:3px solid var(--navy); outline-offset:4px; border-radius:22px}
+.face-f,.face-b{border-radius:22px; backface-visibility:hidden; -webkit-backface-visibility:hidden}
+.face-f{position:relative; min-height:164px; display:flex; flex-direction:column; align-items:center; text-align:center; overflow:hidden;
+  padding-bottom:14px; background:#fff; border:4px solid var(--tc); box-shadow:0 8px 0 var(--tcd), 0 18px 24px -14px rgba(0,0,0,.5);
+  transition:box-shadow .3s, filter .4s}
+.face-f .band{align-self:stretch; position:relative; padding:7px 8px 8px; background:var(--tc); color:#fff;
+  font:400 23px/1 'Secular One','Heebo',sans-serif; font-variant-numeric:tabular-nums; text-shadow:0 2px 0 var(--tcd)}
+.face-f .band::after{content:""; position:absolute; left:0; right:0; bottom:-7px; height:8px;
+  background:radial-gradient(circle at 6px 0, var(--tc) 5.5px, transparent 6px) 0 0/12px 8px repeat-x}
+.face-f .num{position:absolute; top:5px; inset-inline-start:6px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(255,255,255,.28); font:700 12px/1 'Heebo'; text-shadow:none}
+.face-f .spot{position:relative; margin-top:16px; width:58px; height:58px; flex:none; border-radius:50%; display:grid; place-items:center;
+  background:var(--tcs); color:var(--tc); border:3px dashed color-mix(in srgb, var(--tc) 45%, #fff)}
+.face-f .spot svg{width:28px; height:28px; fill:currentColor}
+.face-f .ttl{margin-top:9px; padding:0 8px; font-size:14px; font-weight:700; line-height:1.3; color:var(--ink)}
+.face-f::after{content:""; position:absolute; inset:-20%; pointer-events:none; opacity:0;
+  background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.85) 50%, transparent 65%); transform:translateX(-60%)}
+.tile.just .face-f::after{animation:shineSweep 1s .35s ease-out}
+@keyframes shineSweep{0%{opacity:1; transform:translateX(-60%)}100%{opacity:1; transform:translateX(60%)}}
 
-/* כלי המשחק */
-.piece{position:absolute; left:0; top:0; width:52px; height:52px; margin:-26px 0 0 -26px; z-index:5; pointer-events:none; will-change:transform}
-.piece .shadow{position:absolute; left:6px; right:6px; bottom:-10px; height:12px; border-radius:50%; background:rgba(11,29,63,.35); filter:blur(3px)}
+.face-b{position:absolute; inset:0; transform:rotateY(180deg); display:grid; place-items:center; overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.18) 0 34%, transparent 35%),
+    repeating-linear-gradient(45deg, var(--bk) 0 14px, var(--bk2) 14px 28px);
+  border:4px solid #fff; box-shadow:0 0 0 3px var(--bkd), 0 8px 0 3px var(--bkd), 0 18px 24px -12px rgba(0,0,0,.5)}
+.face-b::before{content:""; position:absolute; inset:8px; border-radius:15px; border:2px dashed rgba(255,255,255,.65)}
+.face-b .q{position:relative; width:66px; height:66px; border-radius:50%; display:grid; place-items:center; background:#fff; color:var(--bkd);
+  font:400 42px/1 'Secular One','Heebo',sans-serif; box-shadow:0 5px 0 rgba(0,0,0,.18), inset 0 -4px 0 rgba(0,0,0,.08)}
+.face-b .qn{position:absolute; top:12px; inset-inline-start:14px; font:700 13px/1 'Heebo'; color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.face-b .qs{position:absolute; bottom:13px; left:0; right:0; text-align:center; font-size:12px; font-weight:700; color:#fff; opacity:.95}
+.tile.next .face-b .q{animation:qWiggle 1.8s ease-in-out infinite}
+@keyframes qWiggle{0%,60%,100%{transform:rotate(0) scale(1)}70%{transform:rotate(-12deg) scale(1.08)}80%{transform:rotate(10deg) scale(1.08)}90%{transform:rotate(-5deg)}}
+.tile.shake .flip{animation:shake .45s}
+@keyframes shake{20%{transform:rotateY(180deg) translateX(-6px)}40%{transform:rotateY(180deg) translateX(6px)}60%{transform:rotateY(180deg) translateX(-4px)}80%{transform:rotateY(180deg) translateX(3px)}}
+
+.tile .ribbon{position:absolute; z-index:3; top:-25px; left:50%; transform:translateX(-50%) rotate(-2deg); white-space:nowrap;
+  padding:4px 12px; border-radius:10px; background:var(--navy); color:#fff; font-size:12px; font-weight:700; box-shadow:0 4px 0 #0b1d3f}
+.tile .ribbon.r1{background:#ff7a2b; box-shadow:0 4px 0 #c4521a}
+.tile .ribbon.r2{background:#14a5a8; box-shadow:0 4px 0 #0d7a7c}
+.tile .ribbon.fin{background:#ffd166; color:var(--navy); box-shadow:0 4px 0 #d9a520}
+.tile .check{position:absolute; z-index:3; top:-8px; inset-inline-end:-8px; width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
+  background:#22b45a; transform:scale(0) rotate(-90deg); transition:transform .45s var(--ease-spring); box-shadow:0 0 0 3px #fff, 0 3px 0 3px #178a43}
+.tile .check svg{width:16px; height:16px; fill:#fff}
+.tile.visited .check{transform:scale(1) rotate(0)}
+.tile.visited .face-f{filter:saturate(.55) brightness(1.02)}
+.tile.current .face-f{box-shadow:0 8px 0 var(--tcd), 0 0 0 5px #fff, 0 0 0 9px var(--tc), 0 22px 34px -12px rgba(0,0,0,.55)}
+.tile.current .face-f .spot{animation:spotPulse 1.8s ease-in-out infinite}
+@keyframes spotPulse{50%{box-shadow:0 0 0 8px color-mix(in srgb, var(--tc) 22%, transparent)}}
+.tile.next::after{content:"הבא בתור"; position:absolute; z-index:3; bottom:-21px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  font-size:11.5px; font-weight:800; color:var(--navy); background:#ffd166; padding:2px 10px; border-radius:99px; box-shadow:0 3px 0 #d9a520;
+  animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(-50%) translateY(-4px)}}
+.tile.d0{--tc:#22b45a}
+
+/* כלי המשחק - חייל משחק קלאסי */
+.piece{position:absolute; left:0; top:0; width:46px; height:62px; margin:-56px 0 0 -23px; z-index:5; pointer-events:none; will-change:transform}
+.piece .shadow{position:absolute; left:4px; right:4px; bottom:-4px; height:12px; border-radius:50%; background:rgba(60,35,5,.38); filter:blur(2.5px)}
 .piece .hop{position:absolute; inset:0; transform-origin:50% 100%}
-.piece .body{position:absolute; inset:0; border-radius:50%; display:grid; place-items:center; color:#fff;
-  background:radial-gradient(circle at 35% 28%, #ffc29e 0%, var(--accent-2) 30%, var(--accent) 62%, color-mix(in srgb, var(--accent) 70%, #000) 100%);
-  border:3px solid #fff; box-shadow:inset 0 -5px 8px rgba(0,0,0,.18), 0 10px 16px -6px rgba(0,0,0,.45); transition:background .8s}
-.piece .body svg{width:26px; height:26px; fill:#fff; transform:rotate(var(--ang,-45deg)); transition:transform .35s var(--ease-out); filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
-.piece .halo{position:absolute; inset:-8px; border-radius:50%; border:2px solid var(--accent); opacity:0; animation:halo 2s ease-out infinite}
-@keyframes halo{0%{opacity:.8; transform:scale(.8)}100%{opacity:0; transform:scale(1.6)}}
-.burst{position:absolute; z-index:4; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; pointer-events:none}
+.piece .pawn{position:absolute; inset:0; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 3px 0 rgba(0,0,0,.18))}
+.piece .halo{position:absolute; left:-10px; right:-10px; bottom:-10px; height:24px; border-radius:50%; border:3px solid var(--accent); opacity:0; animation:halo 2s ease-out infinite}
+@keyframes halo{0%{opacity:.85; transform:scale(.6)}100%{opacity:0; transform:scale(1.5)}}
+.burst{position:absolute; z-index:4; width:9px; height:9px; margin:-4px 0 0 -4px; border-radius:2px; pointer-events:none}
 
 /* ---------- לוח צד: קובייה וכרטיס ---------- */
 .panel{position:sticky; top:18px; display:flex; flex-direction:column; gap:18px; margin-top:18px; animation:rise 1s .35s var(--ease-out) both}
@@ -263,6 +316,11 @@ body.day-2 .sky::after{opacity:1}
 .sched-item.now{background:rgba(255,255,255,.1)}
 .sched-item.now .d{background:var(--c); box-shadow:0 0 0 5px color-mix(in srgb, var(--c) 30%, transparent)}
 .sched-item.now .n{font-weight:700; color:#fff}
+.sched-item.locked{color:#7f8fae; cursor:default}
+.sched-item.locked .t{color:#7f8fae; letter-spacing:1px}
+.sched-item.locked .d{border-style:dashed}
+.sched-item .n{display:inline-flex; align-items:center; gap:6px}
+.sched-item .n svg{width:14px; height:14px; fill:currentColor}
 
 footer{margin:46px 18px 0; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; color:#8fa0bf; font-size:13px}
 
@@ -330,19 +388,26 @@ footer{margin:46px 18px 0; padding-top:20px; border-top:1px solid rgba(255,255,2
   .statusbar{padding:12px}
   .tools{width:100%}
   .tools .tbtn:not(.icon){flex:1; justify-content:center; padding:0 10px}
-  .tile{min-height:134px; padding:14px 6px 12px}
-  .tile .spot{width:46px; height:46px}
-  .tile .spot svg{width:24px; height:24px}
-  .tile .time{font-size:18px; margin-top:8px}
-  .tile .ttl{font-size:12.5px}
+  .face-f{min-height:144px; padding-bottom:10px}
+  .face-f .band{font-size:17px; padding:6px 4px 7px}
+  .face-f .num{display:none}
+  .face-f .spot{width:46px; height:46px; margin-top:13px}
+  .face-f .spot svg{width:22px; height:22px}
+  .face-f .ttl{font-size:12.5px; padding:0 5px}
+  .face-b .q{width:50px; height:50px; font-size:32px}
+  .face-b .qs{font-size:10.5px; bottom:11px}
+  .face-b .qn{top:10px; inset-inline-start:11px}
   .tile .ribbon{font-size:11px; padding:3px 10px}
   .tile .ribbon .rd{display:none}
   .route{margin-top:-14px}
-  .piece{width:44px; height:44px; margin:-22px 0 0 -22px}
-  .piece .body svg{width:22px; height:22px}
+  .piece{width:38px; height:52px; margin:-47px 0 0 -19px}
   .days{grid-template-columns:1fr}
   .schedule,footer{margin-left:4px; margin-right:4px}
-  .board{box-shadow:0 0 0 6px var(--navy), 0 0 0 8px rgba(232,98,42,.75), 0 0 0 13px var(--navy-2), 0 30px 60px -30px rgba(0,0,0,.8); margin:12px 10px 0; border-radius:24px}
+  .board{border-width:10px; margin:12px 8px 0; padding:16px 12px 78px; border-radius:28px;
+    box-shadow:0 0 0 4px #fff, 0 0 0 8px var(--navy), 0 30px 60px -30px rgba(0,0,0,.8)}
+  .deco .d-cloud,.deco .d-balloon{display:none}
+  .deco .scenery{height:76px}
+  .board-head{margin-bottom:26px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
@@ -394,22 +459,57 @@ footer{margin:46px 18px 0; padding-top:20px; border-top:1px solid rgba(255,255,2
 
   <main class="game">
     <section class="board" aria-label="לוח המשחק">
+      <div class="deco" aria-hidden="true">
+        <svg class="d-sun" viewBox="0 0 100 100"><g fill="#ffc94a"><circle cx="50" cy="50" r="24"/><g stroke="#ffc94a" stroke-width="7" stroke-linecap="round"><path d="M50 6v12M50 82v12M6 50h12M82 50h12M19 19l8 8M73 73l8 8M81 19l-8 8M27 73l-8 8"/></g></g><circle cx="50" cy="50" r="17" fill="#ffd970"/></svg>
+        <svg class="d-cloud" viewBox="0 0 120 52"><g fill="#fff"><circle cx="32" cy="30" r="18"/><circle cx="58" cy="22" r="22"/><circle cx="86" cy="31" r="16"/><rect x="18" y="30" width="84" height="20" rx="10"/></g></svg>
+        <svg class="d-cloud c2" viewBox="0 0 120 52"><g fill="#fff"><circle cx="32" cy="30" r="18"/><circle cx="58" cy="22" r="22"/><circle cx="86" cy="31" r="16"/><rect x="18" y="30" width="84" height="20" rx="10"/></g></svg>
+        <svg class="d-balloon" viewBox="0 0 40 60"><path d="M20 2C9 2 2 10 2 20c0 10 10 18 14 24h8c4-6 14-14 14-24C38 10 31 2 20 2z" fill="#ef476f"/><path d="M20 2c-5 0-8 8-8 18s4 18 6 24h4c2-6 6-14 6-24S25 2 20 2z" fill="#ffd166"/><path d="M16 44l1 6M24 44l-1 6" stroke="#8a5a2b" stroke-width="1.5"/><rect x="15" y="50" width="10" height="8" rx="2" fill="#a0672f"/></svg>
+        <svg class="scenery" viewBox="0 0 900 92" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <g id="cactus"><g fill="#3faf5d"><rect x="24" y="6" width="14" height="70" rx="7"/><path d="M24 46h-8a7 7 0 0 1-7-7V24a5.5 5.5 0 0 1 11 0v11h4z"/><path d="M38 38h8a7 7 0 0 0 7-7V20a5.5 5.5 0 0 0-11 0v7h-4z"/></g><path d="M31 12v58" stroke="#2f8f4a" stroke-width="2.5" stroke-linecap="round"/></g>
+            <g id="palm"><path d="M40 40Q47 72 37 100" stroke="#9c6b3a" stroke-width="8" fill="none" stroke-linecap="round"/><g fill="#2f9e5b"><ellipse cx="22" cy="34" rx="22" ry="7" transform="rotate(-25 22 34)"/><ellipse cx="58" cy="34" rx="22" ry="7" transform="rotate(25 58 34)"/><ellipse cx="29" cy="22" rx="19" ry="6.5" transform="rotate(-62 29 22)"/><ellipse cx="51" cy="22" rx="19" ry="6.5" transform="rotate(62 51 22)"/></g><circle cx="40" cy="37" r="5" fill="#7a4a22"/></g>
+          </defs>
+          <path d="M0 92V52Q90 26 190 46T390 40T600 38T780 44T900 40V92Z" fill="#f4d391"/>
+          <use href="#palm" transform="translate(70 6) scale(.78)"/>
+          <use href="#cactus" transform="translate(250 22) scale(.75)"/>
+          <use href="#cactus" transform="translate(560 30) scale(.6)"/>
+          <use href="#palm" transform="translate(700 4) scale(.82)"/>
+          <use href="#palm" transform="translate(760 18) scale(.6)"/>
+          <path d="M0 92V66Q120 50 260 64T520 62T760 60T900 64V92Z" fill="#e8b871"/>
+          <g fill="#c99551"><ellipse cx="180" cy="78" rx="16" ry="6"/><ellipse cx="420" cy="82" rx="12" ry="5"/><ellipse cx="640" cy="80" rx="18" ry="6"/></g>
+          <g transform="translate(430 30)"><path d="M0 28h44" stroke="#9aa3b2" stroke-width="3" stroke-linecap="round"/><path d="M8 28V6l18 7-18 7" fill="#ef476f"/><path d="M8 6v22" stroke="#5a6474" stroke-width="2.5"/></g>
+        </svg>
+      </div>
       <div class="board-head">
         <h2>מסלול הגיבוש</h2>
         <div class="legend">
-          <span class="lg" style="--c:var(--orange)"><i></i>יום א׳ · 22.11</span>
-          <span class="lg" style="--c:var(--teal)"><i></i>יום ב׳ · 23.11</span>
+          <span class="lg" style="--c:#ff7a2b"><i></i>יום א׳ · 22.11</span>
+          <span class="lg" style="--c:#14a5a8"><i></i>יום ב׳ · 23.11</span>
         </div>
       </div>
       <div class="tiles" id="tiles">
         <svg class="road" id="road" aria-hidden="true">
+          <path class="edge" id="roadEdge"/>
           <path class="base" id="roadBase"/>
           <path class="done" id="roadDone"/>
           <path class="dash" id="roadDash"/>
         </svg>
         <div class="piece" id="piece" aria-hidden="true">
           <div class="shadow"></div>
-          <div class="hop"><div class="halo"></div><div class="body"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div></div>
+          <div class="hop"><div class="halo"></div>
+            <svg class="pawn" viewBox="0 0 46 62">
+              <defs>
+                <linearGradient id="pawnG" x1="0" x2="1"><stop offset="0" style="stop-color:var(--accent-2)"/><stop offset=".45" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:color-mix(in srgb, var(--accent) 65%, #000)"/></linearGradient>
+                <radialGradient id="pawnH" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".25" style="stop-color:var(--accent-2)"/><stop offset="1" style="stop-color:color-mix(in srgb, var(--accent) 70%, #000)"/></radialGradient>
+              </defs>
+              <path d="M14 31C14 39 9 47 6 52h34c-3-5-8-13-8-21z" fill="url(#pawnG)"/>
+              <rect x="3" y="50" width="40" height="10" rx="5" fill="url(#pawnG)"/>
+              <ellipse cx="23" cy="30" rx="11" ry="4" fill="url(#pawnG)"/>
+              <circle cx="23" cy="15" r="12" fill="url(#pawnH)"/>
+              <ellipse cx="18" cy="10" rx="3.5" ry="2.5" fill="#fff" opacity=".8"/>
+              <path d="M10 54h26" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
@@ -486,6 +586,7 @@ const P = {
   sun:'M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z',
   terrain:'M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z',
   play:'M8 5v14l11-7z',
+  lock:'M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z',
   check:'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
   clock:'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z',
   trophy:'M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z',
@@ -498,7 +599,7 @@ const ico = n => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+P[n]+'"
 /* ---------- הלו״ז ---------- */
 const S = [
   {day:0, time:'',      title:'נקודת הזינוק',            short:'התחלה',               icon:'flag',
-   desc:'כולם מוכנים? לוחצים על הקובייה ויוצאים יחד לגיבוש, תחנה אחרי תחנה.'},
+   desc:'כל התחנות הפוכות על הלוח. כל הטלת קובייה חושפת את התחנה הבאה - מוכנים?'},
   {day:1, time:'08:00', title:'המראה מרמון',             short:'המראה מרמון',          icon:'takeoff',
    desc:'עולים למטוס בנמל הבית וממריאים צפונה. חגורות רכוסות - הגיבוש התחיל.'},
   {day:1, time:'09:00', title:'יציאה מנתב״ג באוטובוס',    short:'אוטובוס מנתב״ג',       icon:'bus',
@@ -528,9 +629,9 @@ const DAYS = {0:'לפני היציאה', 1:'יום א׳ · 22.11', 2:'יום ב�
 /* ---------- מצב ---------- */
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = id => document.getElementById(id);
-const tilesEl = $('tiles'), piece = $('piece'), hop = piece.querySelector('.hop'), pShadow = piece.querySelector('.shadow'), pIcon = piece.querySelector('.body svg');
+const tilesEl = $('tiles'), piece = $('piece'), hop = piece.querySelector('.hop'), pShadow = piece.querySelector('.shadow');
 const dieBtn = $('dieBtn'), die = $('die'), faceFront = $('faceFront');
-let idx = 0, busy = false, cols = 0, pos = {x:0, y:0}, cum = [], total = 0, rolledOnce = false;
+let idx = 0, revealed = 0, busy = false, cols = 0, pos = {x:0, y:0}, cum = [], total = 0, rolledOnce = false;
 const tiles = [];
 
 /* ---------- כוכבים ---------- */
@@ -552,43 +653,58 @@ const PIPS = {2:[0,8], 3:[0,4,8], 4:[0,2,6,8], 5:[0,2,4,6,8], 6:[0,2,3,5,6,8]};
 });
 faceFront.innerHTML = ico('play');
 
-/* ---------- בניית האריחים ---------- */
+/* ---------- בניית האריחים (קלפים הפוכים) ---------- */
+const COLORS = ['#22b45a','#ef476f','#3a86ff','#06a77d','#ff8c1a','#8f5cf6','#e63946','#f2a007','#2a9d8f','#ff6b35','#4361ee','#E8622A'];
 S.forEach((st, i) => {
   const b = document.createElement('div');
-  b.className = 'tile d' + st.day;
+  b.className = 'tile d' + st.day + (i === 0 ? ' revealed' : ' hidden');
   b.style.setProperty('--i', i);
+  b.style.setProperty('--tc', COLORS[i]);
   b.setAttribute('role', 'button');
   b.setAttribute('tabindex', '0');
-  b.setAttribute('aria-label', i === 0 ? 'נקודת הזינוק' : 'תחנה ' + i + ': ' + st.time + ' ' + st.title);
   let ribbon = '';
-  if (i === 1) ribbon = '<span class="ribbon">יום א׳<span class="rd"> · 22.11</span></span>';
-  if (i === 7) ribbon = '<span class="ribbon">יום ב׳<span class="rd"> · 23.11</span></span>';
+  if (i === 1) ribbon = '<span class="ribbon r1">יום א׳<span class="rd"> · 22.11</span></span>';
+  if (i === 7) ribbon = '<span class="ribbon r2">יום ב׳<span class="rd"> · 23.11</span></span>';
+  if (i === LAST) ribbon = '<span class="ribbon fin">קו הסיום</span>';
   b.innerHTML = ribbon +
-    '<span class="num">' + (i === 0 ? '★' : i) + '</span>' +
     '<span class="check">' + ico('check') + '</span>' +
-    '<span class="spot">' + ico(st.icon) + '</span>' +
-    '<span class="time">' + (st.time || 'יוצאים!') + '</span>' +
-    '<span class="ttl">' + st.short + '</span>';
-  b.addEventListener('click', () => jumpTo(i));
-  b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); jumpTo(i); } });
+    '<div class="flip">' +
+      '<div class="face-f">' +
+        '<div class="band">' + (i ? '<span class="num">' + i + '</span>' : '') + (st.time || 'התחלה') + '</div>' +
+        '<span class="spot">' + ico(st.icon) + '</span>' +
+        '<span class="ttl">' + (i ? st.short : 'יוצאים לדרך!') + '</span>' +
+      '</div>' +
+      (i ? '<div class="face-b"><span class="qn">' + i + '</span><span class="q">?</span><span class="qs">מה מחכה כאן?</span></div>' : '') +
+    '</div>';
+  b.addEventListener('click', () => tileClick(i));
+  b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tileClick(i); } });
   tilesEl.appendChild(b);
   tiles.push(b);
 });
+function tileClick(i){
+  if (i <= revealed) { jumpTo(i); return; }
+  if (i === idx + 1 && !busy) { roll(); return; }
+  const t = tiles[i];
+  t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake');
+  setTimeout(() => t.classList.remove('shake'), 500);
+  sfx.nope();
+}
 
-/* ---------- לו״ז מלא ---------- */
+/* ---------- לו״ז מלא (נחשף יחד עם הלוח) ---------- */
 (function schedule(){
   const wrap = $('days');
   [1,2].forEach(d => {
     const card = document.createElement('div');
     card.className = 'day-card';
-    card.style.setProperty('--c', d === 1 ? 'var(--orange)' : 'var(--teal)');
+    card.style.setProperty('--c', d === 1 ? '#ff7a2b' : '#14a5a8');
     card.innerHTML = '<h3><i></i>' + (d === 1 ? 'יום א׳' : 'יום ב׳') + ' <small>' + (d === 1 ? 'יום ראשון · 22.11.2026' : 'יום שני · 23.11.2026') + '</small></h3><ul class="sched-list"></ul>';
     const ul = card.querySelector('ul');
     S.forEach((st, i) => {
       if (st.day !== d) return;
       const li = document.createElement('li');
-      li.innerHTML = '<button class="sched-item" data-i="' + i + '"><span class="t">' + st.time + '</span><span class="d"></span><span class="n">' + st.title + '</span></button>';
+      li.innerHTML = '<button class="sched-item locked" data-i="' + i + '"><span class="t"></span><span class="d"></span><span class="n"></span></button>';
       li.firstChild.addEventListener('click', () => {
+        if (i > revealed) { tileClick(i); return; }
         jumpTo(i);
         $('tiles').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
       });
@@ -616,12 +732,13 @@ function layout(){
   pos = spotPos(idx);
   setPiece(pos);
 }
+function offsetIn(el){ let x = 0, y = 0, n = el; while (n && n !== tilesEl) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return {x, y}; }
 function center(i){ const t = tiles[i]; return {x: t.offsetLeft + t.offsetWidth / 2, y: t.offsetTop + t.offsetHeight / 2}; }
-function spotPos(i){ const t = tiles[i], s = t.querySelector('.spot'); return {x: t.offsetLeft + s.offsetLeft + s.offsetWidth / 2, y: t.offsetTop + s.offsetTop + s.offsetHeight / 2 - 4}; }
+function spotPos(i){ const s = tiles[i].querySelector('.spot'), o = offsetIn(s); return {x: o.x + s.offsetWidth / 2, y: o.y + s.offsetHeight / 2 + 4}; }
 function buildRoad(){
   const pts = tiles.map((_, i) => center(i));
   const d = 'M' + pts.map(p => p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' L ');
-  ['roadBase','roadDone','roadDash'].forEach(id => $(id).setAttribute('d', d));
+  ['roadEdge','roadBase','roadDone','roadDash'].forEach(id => $(id).setAttribute('d', d));
   cum = [0]; total = 0;
   for (let i = 1; i < pts.length; i++) { total += Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y); cum.push(total); }
   const done = $('roadDone');
@@ -637,45 +754,67 @@ function setPiece(p){ piece.style.transform = 'translate(' + p.x + 'px,' + p.y +
 /* ---------- תנועת הכלי ---------- */
 function hopTo(i, dur){
   const to = spotPos(i), from = pos;
-  const ang = Math.atan2(to.y - from.y, to.x - from.x) * 180 / Math.PI + 90;
-  pIcon.style.setProperty('--ang', ang + 'deg');
   if (RM) { pos = to; setPiece(to); return Promise.resolve(); }
   const a = piece.animate([
     {transform:'translate(' + from.x + 'px,' + from.y + 'px)'},
     {transform:'translate(' + to.x + 'px,' + to.y + 'px)'}
   ], {duration:dur, easing:'cubic-bezier(.45,.05,.3,1)', fill:'forwards'});
-  const lift = Math.min(70, 34 + Math.hypot(to.x - from.x, to.y - from.y) * .12);
+  const lift = Math.min(80, 40 + Math.hypot(to.x - from.x, to.y - from.y) * .12);
+  const lean = to.x < from.x ? -10 : 10;
   hop.animate([
-    {transform:'translateY(0) scale(1)'},
-    {transform:'translateY(' + (-lift) + 'px) scale(1.14)', offset:.5},
-    {transform:'translateY(0) scale(1)', offset:.84},
-    {transform:'translateY(0) scale(1.16,.82)', offset:.92},
-    {transform:'translateY(0) scale(1)'}
+    {transform:'translateY(0) rotate(0) scale(1)'},
+    {transform:'translateY(4px) rotate(0) scale(1.1,.88)', offset:.12},
+    {transform:'translateY(' + (-lift) + 'px) rotate(' + lean + 'deg) scale(.95,1.08)', offset:.5},
+    {transform:'translateY(0) rotate(0) scale(1)', offset:.84},
+    {transform:'translateY(0) rotate(0) scale(1.18,.8)', offset:.92},
+    {transform:'translateY(0) rotate(0) scale(1)'}
   ], {duration:dur, easing:'ease-in-out'});
   pShadow.animate([
     {transform:'scale(1)', opacity:1},
-    {transform:'scale(.5)', opacity:.35, offset:.5},
+    {transform:'scale(.45)', opacity:.3, offset:.5},
     {transform:'scale(1)', opacity:1, offset:.84},
-    {transform:'scale(1.15)', opacity:1}
+    {transform:'scale(1.2)', opacity:1}
   ], {duration:dur, easing:'ease-in-out'});
-  return a.finished.then(() => { pos = to; setPiece(to); a.cancel(); burst(to); });
+  return a.finished.then(() => { pos = to; setPiece(to); a.cancel(); burst(to, 10); });
 }
-function burst(p){
+function burst(p, n){
   if (RM) return;
-  const colors = getComputedStyle(document.body);
-  const c1 = colors.getPropertyValue('--accent').trim(), c2 = colors.getPropertyValue('--accent-2').trim();
-  for (let k = 0; k < 10; k++) {
+  const cs = ['#ffd166','#ef476f','#3a86ff','#06b47f','#ff8c1a','#8f5cf6'];
+  for (let k = 0; k < n; k++) {
     const d = document.createElement('span');
     d.className = 'burst';
-    d.style.left = p.x + 'px'; d.style.top = (p.y + 18) + 'px';
-    d.style.background = k % 2 ? c1 : c2;
+    d.style.left = p.x + 'px'; d.style.top = p.y + 'px';
+    d.style.background = cs[k % cs.length];
     tilesEl.appendChild(d);
-    const a = (Math.PI * 2 * k) / 10 + Math.random() * .4, r = 26 + Math.random() * 18;
+    const a = (Math.PI * 2 * k) / n + Math.random() * .4, r = 30 + Math.random() * (n > 12 ? 50 : 20);
     d.animate([
-      {transform:'translate(0,0) scale(1)', opacity:1},
-      {transform:'translate(' + Math.cos(a) * r + 'px,' + (Math.sin(a) * r * .55) + 'px) scale(.2)', opacity:0}
-    ], {duration:520, easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish = () => d.remove();
+      {transform:'translate(0,0) rotate(0) scale(1)', opacity:1},
+      {transform:'translate(' + Math.cos(a) * r + 'px,' + (Math.sin(a) * r * .7) + 'px) rotate(' + (Math.random() * 360) + 'deg) scale(.3)', opacity:0}
+    ], {duration:620, easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish = () => d.remove();
   }
+}
+
+/* ---------- חשיפת קלף ---------- */
+function reveal(i, wait){
+  const t = tiles[i];
+  if (!t.classList.contains('hidden')) return Promise.resolve();
+  t.classList.remove('hidden');
+  t.classList.add('revealed', 'just');
+  revealed = Math.max(revealed, i);
+  setTimeout(() => t.classList.remove('just'), 1500);
+  sfx.reveal();
+  if (!RM) {
+    const c = center(i);
+    setTimeout(() => burst(c, 16), 260);
+  }
+  return new Promise(r => setTimeout(r, RM ? 0 : wait));
+}
+function hideAll(){
+  tiles.forEach((t, i) => {
+    if (i === 0) return;
+    setTimeout(() => { t.classList.remove('revealed', 'just'); t.classList.add('hidden'); }, RM ? 0 : (LAST - i) * 55);
+  });
+  revealed = 0;
 }
 
 /* ---------- רינדור מצב ---------- */
@@ -686,11 +825,15 @@ function render(animateCard){
     t.classList.toggle('visited', i < idx);
     t.classList.toggle('current', i === idx);
     t.classList.toggle('next', i === idx + 1);
+    t.setAttribute('aria-label', i === 0 ? 'נקודת הזינוק' : (i <= revealed ? 'תחנה ' + i + ': ' + S[i].time + ' ' + S[i].title : 'תחנה ' + i + ' - עדיין מוסתרת'));
   });
   document.querySelectorAll('.sched-item').forEach(b => {
-    const i = +b.dataset.i;
+    const i = +b.dataset.i, open = i <= revealed;
+    b.classList.toggle('locked', !open);
     b.classList.toggle('done', i < idx);
     b.classList.toggle('now', i === idx);
+    b.querySelector('.t').textContent = open ? S[i].time : '??:??';
+    b.querySelector('.n').innerHTML = open ? S[i].title : ico('lock') + '<span>תיחשף בהמשך</span>';
   });
   $('progFill').style.width = (idx / LAST * 100) + '%';
   $('progNum').textContent = idx + ' / ' + LAST;
@@ -702,16 +845,16 @@ function render(animateCard){
   $('cTitle').textContent = st.title;
   $('cDesc').textContent = st.desc;
   const nx = S[idx + 1];
-  $('cNext').innerHTML = nx ? ico('clock') + '<span>הבא בתור: <b>' + nx.time + ' · ' + nx.title + '</b></span>' : ico('trophy') + '<span><b>סוף המסלול - כל הכבוד!</b></span>';
+  if (!nx) $('cNext').innerHTML = ico('trophy') + '<span><b>סוף המסלול - כל הכבוד!</b></span>';
+  else if (idx + 1 <= revealed) $('cNext').innerHTML = ico('clock') + '<span>הבא בתור: <b>' + nx.time + ' · ' + nx.title + '</b></span>';
+  else $('cNext').innerHTML = ico('lock') + '<span>התחנה הבאה עדיין מוסתרת - <b>הטילו את הקובייה</b></span>';
   $('btnBack').disabled = idx === 0;
   dieBtn.disabled = idx === LAST;
-  dieBtn.setAttribute('aria-label', idx === LAST ? 'הגעתם לסוף המסלול' : 'הטלת קובייה - מעבר לתחנה הבאה: ' + S[idx + 1].time + ' ' + S[idx + 1].title);
+  dieBtn.setAttribute('aria-label', idx === LAST ? 'הגעתם לסוף המסלול' : 'הטלת קובייה - חשיפת התחנה הבאה');
   updateRoad();
   if (animateCard && !RM) {
     const inner = $('cardInner');
     inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
-    const sp = tiles[idx].querySelector('.spot');
-    sp.animate([{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}], {duration:500, easing:'cubic-bezier(.34,1.56,.64,1)'});
   }
 }
 
@@ -729,11 +872,11 @@ function rollDie(nextIcon){
     {transform:t(BASE.x + sx + 12, BASE.y + sy - 10, sz), offset:.85},
     {transform:t(BASE.x + sx, BASE.y + sy, sz)}
   ], {duration:1050, easing:'cubic-bezier(.25,.6,.25,1)'});
-  const bob = die.parentElement.animate([
+  die.parentElement.animate([
     {transform:'translateY(0)'}, {transform:'translateY(-46px)', offset:.3}, {transform:'translateY(0)', offset:.62},
     {transform:'translateY(-12px)', offset:.78}, {transform:'translateY(0)'}
   ], {duration:1050, easing:'ease-in-out'});
-  const fl = dieBtn.querySelector('.die-floor').animate([
+  dieBtn.querySelector('.die-floor').animate([
     {transform:'scale(1)', opacity:1}, {transform:'scale(.55)', opacity:.4, offset:.3}, {transform:'scale(1)', opacity:1, offset:.62},
     {transform:'scale(.85)', opacity:.8, offset:.78}, {transform:'scale(1)', opacity:1}
   ], {duration:1050, easing:'ease-in-out'});
@@ -749,7 +892,8 @@ async function roll(){
   const next = idx + 1;
   await rollDie(S[next].icon);
   if (S[next].day === 2 && S[idx].day === 1) await daybreak();
-  await hopTo(next, 720);
+  await reveal(next, 700);
+  await hopTo(next, 700);
   idx = next;
   sfx.land();
   render(true);
@@ -757,15 +901,17 @@ async function roll(){
   if (idx === LAST) setTimeout(finish, RM ? 0 : 450);
 }
 
-/* קפיצה ישירה לתחנה (מהלוח או מהלו״ז) */
-async function jumpTo(target){
+/* קפיצה ישירה לתחנה שכבר נחשפה (או עד השעה הנוכחית בכפתור "מה עכשיו?") */
+async function jumpTo(target, allowReveal){
   if (busy || target === idx) return;
+  if (target > revealed && !allowReveal) return;
   busy = true;
   const step = target > idx ? 1 : -1;
   const n = Math.abs(target - idx);
-  const dur = n > 1 ? Math.max(230, 420 - n * 20) : 560;
+  const dur = n > 1 ? Math.max(240, 430 - n * 20) : 560;
   while (idx !== target) {
     const nx = idx + step;
+    if (nx > revealed) await reveal(nx, 380);
     await hopTo(nx, dur);
     idx = nx;
     sfx.tick();
@@ -805,7 +951,7 @@ function finish(){
 function closeFinish(){ $('finish').hidden = true; dieBtn.focus({preventScroll:true}); }
 function confetti(){
   if (RM) return;
-  const cs = ['#E8622A','#ff8a4c','#13999e','#2fc4c6','#ffd166','#ffffff','#1B3A6B'];
+  const cs = ['#E8622A','#ff8a4c','#13999e','#2fc4c6','#ffd166','#ffffff','#1B3A6B','#ef476f','#3a86ff'];
   for (let i = 0; i < 150; i++) {
     const c = document.createElement('div');
     c.className = 'confetti';
@@ -826,14 +972,15 @@ function confetti(){
 async function reset(){
   if (busy) return;
   $('finish').hidden = true;
-  if (idx === 0) return;
+  if (idx === 0 && revealed === 0) return;
   busy = true;
-  await hopTo(0, 900);
+  if (idx !== 0) await hopTo(0, 900);
   idx = 0;
+  hideAll();
   faceFront.innerHTML = ico('play');
   render(true);
   sfx.land();
-  busy = false;
+  setTimeout(() => { busy = false; }, RM ? 0 : LAST * 55 + 300);
 }
 async function back(){
   if (busy || idx === 0) return;
@@ -873,6 +1020,8 @@ const sfx = (function(){
     rattle(){ [0,.09,.17,.27,.36,.5,.62,.8,.95].forEach((w, i) => knock(w, .55 - i * .04)); },
     land(){ tone(620, .14, 'triangle', .09); tone(930, .16, 'sine', .06, .07); },
     tick(){ tone(820, .06, 'triangle', .04); },
+    reveal(){ [784, 988, 1175, 1568].forEach((f, i) => tone(f, .18, 'sine', .05, i * .06)); },
+    nope(){ tone(220, .12, 'square', .03); tone(180, .14, 'square', .03, .09); },
     chime(){ [523, 659, 784].forEach((f, i) => tone(f, .5, 'sine', .05, i * .18)); },
     fanfare(){ [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, i > 3 ? .45 : .22, 'triangle', .07, i * .13)); },
     toggle(){ on = !on; return on; },
@@ -909,7 +1058,7 @@ $('btnAgain').addEventListener('click', reset);
 $('btnClose').addEventListener('click', closeFinish);
 $('finish').addEventListener('click', e => { if (e.target.id === 'finish') closeFinish(); });
 $('btnSound').addEventListener('click', () => { sfx.toggle(); soundIcon(); });
-$('btnLive').addEventListener('click', () => { const k = liveIndex(); if (k !== null) jumpTo(k); });
+$('btnLive').addEventListener('click', () => { const k = liveIndex(); if (k !== null) jumpTo(k, true); });
 document.addEventListener('keydown', e => {
   if (!$('finish').hidden) { if (e.key === 'Escape') closeFinish(); return; }
   const tag = (e.target.tagName || '').toLowerCase();
